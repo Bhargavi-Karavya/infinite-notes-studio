@@ -11,4 +11,10 @@ export const songs: Song[] = [
  {id:"golden-hour",title:"Golden Hour",artist:"Elias North",album:"Open Roads",status:"Draft",created:"Sep 02, 2026",duration:"3:55",genre:"Acoustic",language:"English",artwork:midnight,plays:"—",lyrics:"The road runs quiet through the amber light\nWe keep on moving till the day meets night"},
  {id:"velvet-static",title:"Velvet Static",artist:"Nova Bloom",album:"Frequency",status:"Published",created:"Aug 29, 2026",duration:"2:59",genre:"Dream Pop",language:"English",artwork:neon,plays:"378K",lyrics:"Velvet static in the air tonight\nEvery frequency is burning bright"},
 ];
-export const getSong=(id:string)=>songs.find((song)=>song.id===id) ?? songs[0];
+export const getSong=(id:string): Song=>{
+ const match=songs.find((song)=>song.id===id);
+ if(match) return match;
+ const fallback=songs[0];
+ if(fallback) return fallback;
+ throw new Error("Song catalog is empty");
+};
