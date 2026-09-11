@@ -10,33 +10,101 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SongsIndexRouteImport } from './routes/songs.index'
+import { Route as SongsSongIdRouteImport } from './routes/songs.$songId'
+import { Route as SongsNewRouteImport } from './routes/songs.new'
+import { Route as SongsSongIdEditRouteImport } from './routes/songs.$songId.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SongsIndexRoute = SongsIndexRouteImport.update({
+  id: '/songs/',
+  path: '/songs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SongsSongIdRoute = SongsSongIdRouteImport.update({
+  id: '/songs/$songId',
+  path: '/songs/$songId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SongsNewRoute = SongsNewRouteImport.update({
+  id: '/songs/new',
+  path: '/songs/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SongsSongIdEditRoute = SongsSongIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => SongsSongIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/songs/$songId': typeof SongsSongIdRouteWithChildren
+  '/songs/new': typeof SongsNewRoute
+  '/songs/': typeof SongsIndexRoute
+  '/songs/$songId/edit': typeof SongsSongIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/songs/$songId': typeof SongsSongIdRouteWithChildren
+  '/songs/new': typeof SongsNewRoute
+  '/songs': typeof SongsIndexRoute
+  '/songs/$songId/edit': typeof SongsSongIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRoute
+  '/songs/$songId': typeof SongsSongIdRouteWithChildren
+  '/songs/new': typeof SongsNewRoute
+  '/songs/': typeof SongsIndexRoute
+  '/songs/$songId/edit': typeof SongsSongIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/songs/$songId'
+    | '/songs/new'
+    | '/songs/'
+    | '/songs/$songId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/settings'
+    | '/songs/$songId'
+    | '/songs/new'
+    | '/songs'
+    | '/songs/$songId/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/settings'
+    | '/songs/$songId'
+    | '/songs/new'
+    | '/songs/'
+    | '/songs/$songId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SettingsRoute: typeof SettingsRoute
+  SongsSongIdRoute: typeof SongsSongIdRouteWithChildren
+  SongsNewRoute: typeof SongsNewRoute
+  SongsIndexRoute: typeof SongsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +116,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/songs/': {
+      id: '/songs/'
+      path: '/songs'
+      fullPath: '/songs/'
+      preLoaderRoute: typeof SongsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/songs/$songId': {
+      id: '/songs/$songId'
+      path: '/songs/$songId'
+      fullPath: '/songs/$songId'
+      preLoaderRoute: typeof SongsSongIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/songs/new': {
+      id: '/songs/new'
+      path: '/songs/new'
+      fullPath: '/songs/new'
+      preLoaderRoute: typeof SongsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/songs/$songId/edit': {
+      id: '/songs/$songId/edit'
+      path: '/edit'
+      fullPath: '/songs/$songId/edit'
+      preLoaderRoute: typeof SongsSongIdEditRouteImport
+      parentRoute: typeof SongsSongIdRoute
+    }
   }
 }
 
+interface SongsSongIdRouteChildren {
+  SongsSongIdEditRoute: typeof SongsSongIdEditRoute
+}
+
+const SongsSongIdRouteChildren: SongsSongIdRouteChildren = {
+  SongsSongIdEditRoute: SongsSongIdEditRoute,
+}
+
+const SongsSongIdRouteWithChildren = SongsSongIdRoute._addFileChildren(
+  SongsSongIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SettingsRoute: SettingsRoute,
+  SongsSongIdRoute: SongsSongIdRouteWithChildren,
+  SongsNewRoute: SongsNewRoute,
+  SongsIndexRoute: SongsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
