@@ -1,24 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Activity, ArrowRight, FileClock, Headphones, Music2, Plus, Radio, TrendingUp } from "lucide-react";
+import { AdminShell } from "@/components/admin/AdminShell";
+import { Artwork, PageHeader, Panel, StatusBadge } from "@/components/admin/ui";
+import { songs } from "@/lib/songs";
+export const Route=createFileRoute("/")({head:()=>({meta:[{title:"Dashboard — Infinite Notes Admin"},{name:"description",content:"Manage the Infinite Notes music catalog."},{property:"og:title",content:"Infinite Notes Admin Dashboard"},{property:"og:description",content:"Music catalog operations dashboard."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),component:Dashboard});
+function Dashboard(){const stats=[{label:"Total songs",value:"1,284",change:"+48 this month",icon:Music2,tone:"cyan"},{label:"Published",value:"1,156",change:"90% of catalog",icon:Radio,tone:"green"},{label:"In review",value:"32",change:"8 need attention",icon:FileClock,tone:"pink"},{label:"Total plays",value:"12.8M",change:"+18.4% vs last month",icon:Headphones,tone:"violet"}];return <AdminShell><PageHeader eyebrow="Catalog overview" title="Good afternoon, Aria" description="Here’s what’s happening across Infinite Notes today."><Link to="/songs/new" className="btn btn-primary"><Plus/>Add new song</Link></PageHeader><div className="stats-grid">{stats.map(({label,value,change,icon:Icon,tone})=><Panel key={label} className="stat-card"><div className={`stat-icon ${tone}`}><Icon/></div><p>{label}</p><strong>{value}</strong><small><TrendingUp/>{change}</small></Panel>)}</div><div className="dashboard-grid"><Panel className="chart-panel"><div className="section-heading"><div><h2>Catalog activity</h2><p>New songs added over the last 7 months</p></div><span className="trend-pill">+24.8%</span></div><div className="chart" aria-label="Monthly catalog additions bar chart">{[44,67,51,78,62,92,74].map((h,i)=><div key={i} className="bar-wrap"><div className="bar" style={{height:`${h}%`}}/><span>{["Mar","Apr","May","Jun","Jul","Aug","Sep"][i]}</span></div>)}</div></Panel><Panel className="breakdown"><div className="section-heading"><div><h2>Publishing status</h2><p>Current catalog distribution</p></div></div><div className="donut"><div><strong>1,284</strong><span>Total songs</span></div></div><div className="legend"><p><span className="dot published"/>Published <b>90%</b></p><p><span className="dot review"/>In review <b>6%</b></p><p><span className="dot draft"/>Draft <b>4%</b></p></div></Panel></div><Panel className="recent-panel"><div className="section-heading"><div><h2>Recently added songs</h2><p>Latest additions to your catalog</p></div><Link to="/songs">View catalog <ArrowRight/></Link></div><div className="recent-list">{songs.slice(0,4).map(song=><Link key={song.id} to="/songs/$songId" params={{songId:song.id}} className="recent-row"><Artwork src={song.artwork} title={song.title} size="sm"/><div className="song-cell"><strong>{song.title}</strong><span>{song.artist} · {song.album}</span></div><span className="genre">{song.genre}</span><StatusBadge status={song.status}/><span className="date">{song.created}</span><ArrowRight className="row-arrow"/></Link>)}</div></Panel></AdminShell>}
